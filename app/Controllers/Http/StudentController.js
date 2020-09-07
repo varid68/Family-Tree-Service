@@ -89,7 +89,7 @@ class StudentController {
       return response.status(404).json({ data: 'Resource not found' })
     }
     await student.delete()
-    return response.status(204).json(null)
+    return response.status(200).json(null)
   }
 }
 
