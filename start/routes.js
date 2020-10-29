@@ -21,9 +21,10 @@ Route.get('/', () => {
 })
 
 Route.group(() => {
-  Route.get('students', 'StudentController.index')
-  Route.get('students/:id', 'StudentController.show')
-  Route.put('students/:id', 'StudentController.update')
-  Route.post('students', 'StudentController.store')
-  Route.delete('students/:id', 'StudentController.delete')
+  Route.get('hirarkis', 'HirarkiController.index')
+  Route.get('hirarkis/:id', 'HirarkiController.show')
+  Route.put('hirarkis/:id', 'HirarkiController.update')
+  Route.post('hirarkis', 'HirarkiController.store')
+  Route.delete('hirarkis/:id', 'HirarkiController.delete')
 }).prefix('v1')
+

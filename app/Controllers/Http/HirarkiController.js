@@ -1,9 +1,10 @@
 'use strict'
 
-const Student = use('App/Models/Student')
+const DetailHirarki = use('App/Models/DetailHirarki')
+const Hirarki = use('App/Models/Hirarki')
 const Database = use('Database')
 
-class StudentController {
+class HirarkiController {
   async index({ request, response }) {
     const url = request.url()
     const limit = Number(request.input('limit', 10))
@@ -12,14 +13,14 @@ class StudentController {
     const order = request.input('order', 'asc')
 
     try {
-      const students = await Database
-        .table('students')
+      const hirarkis = await Database
+        .table('hirarkis')
         .orderBy(sortby, order)
         .offset(offset)
         .limit(limit)
 
       const count = await Database
-        .table('students')
+        .table('hirarkis')
         .limit(limit)
         .count()
 
@@ -29,7 +30,7 @@ class StudentController {
         href: `${url}?limit=${limit}&offset=${offset}&sortby=${sortby}&order=${order}`,
         limit,
         offset,
-        payload: students,
+        payload: hirarkis,
         status_code: 200,
         status_message: "Success"
       })
@@ -44,10 +45,10 @@ class StudentController {
   }
 
   async show({ params, response }) {
-    const student = await Student.find(params.id)
-    if (student) {
+    const hirarki = await Hirarki.find(params.id)
+    if (hirarki) {
       return response.status(201).send({
-        payload: student,
+        payload: hirarki,
         status_code: 200,
         status_message: "Success"
       })
@@ -61,36 +62,49 @@ class StudentController {
   }
 
   async store({ request, response }) {
-    const studentInfo = request.only(['nisn', 'name', 'study'])
-    const student = new Student()
-    student.nisn = studentInfo.nisn
-    student.name = studentInfo.name
-    student.study = studentInfo.study
-    await student.save()
-    return response.status(201).json(student)
+    const body = request.post()
+    const hirarki = new Hirarki()
+
+    hirarki.id = body.hirarki_id
+    hirarki.name = body.hirarki_name
+    hirarki.head = body.head
+    await hirarki.save()
+
+
+    body.data.forEach(item => {
+      const detailHirarki = new DetailHirarki()
+      detailHirarki.name = item.name
+      detailHirarki.couple = item.couple
+      detailHirarki.parent = item.parent
+      detailHirarki.address = item.address
+      detailHirarki.id_hirarki = body.hirarki_id
+      detailHirarki.save()
+    })
+
+    return response.status(201).json(hirarki)
   }
 
   async update({ params, request, response }) {
-    const studentInfo = request.only(['nisn', 'name', 'study'])
-    const student = await Student.find(params.id)
-    if (!student) {
+    const hirarkiInfo = request.only(['nisn', 'name', 'study'])
+    const hirarki = await Hirarki.find(params.id)
+    if (!hirarki) {
       return response.status(404).json({ data: 'Resource not found' })
     }
-    student.nisn = studentInfo.nisn
-    student.name = studentInfo.name
-    student.study = studentInfo.study
-    await student.save()
-    return response.status(200).json(student)
+    hirarki.nisn = hirarkiInfo.nisn
+    hirarki.name = hirarkiInfo.name
+    hirarki.study = hirarkiInfo.study
+    await hirarki.save()
+    return response.status(200).json(hirarki)
   }
 
   async delete({ params, response }) {
-    const student = await Student.find(params.id)
-    if (!student) {
+    const hirarki = await Hirarki.find(params.id)
+    if (!hirarki) {
       return response.status(404).json({ data: 'Resource not found' })
     }
-    await student.delete()
+    await hirarki.delete()
     return response.status(200).json(null)
   }
 }
 
-module.exports = StudentController
+module.exports = HirarkiController
