@@ -81,7 +81,11 @@ class HirarkiController {
       detailHirarki.save()
     })
 
-    return response.status(201).json(hirarki)
+    return response.status(201).send({
+      payload: hirarki,
+      status_code: 201,
+      status_message: "Success"
+    })
   }
 
   async update({ params, request, response }) {
