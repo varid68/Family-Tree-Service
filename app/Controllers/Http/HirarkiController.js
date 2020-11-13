@@ -65,7 +65,7 @@ class HirarkiController {
     const body = request.post()
     const hirarki = new Hirarki()
 
-    hirarki.id = body.hirarki_id
+    hirarki.id = body.id_hirarki
     hirarki.name = body.hirarki_name
     hirarki.head = body.head
     await hirarki.save()
@@ -73,11 +73,13 @@ class HirarkiController {
 
     body.data.forEach(item => {
       const detailHirarki = new DetailHirarki()
+      detailHirarki.id = item.id
       detailHirarki.name = item.name
       detailHirarki.couple = item.couple
       detailHirarki.parent = item.parent
       detailHirarki.address = item.address
-      detailHirarki.id_hirarki = body.hirarki_id
+      detailHirarki.pid = item.pid
+      detailHirarki.id_hirarki = body.id_hirarki
       detailHirarki.save()
     })
 
